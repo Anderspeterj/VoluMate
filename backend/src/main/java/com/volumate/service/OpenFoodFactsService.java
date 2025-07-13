@@ -47,6 +47,17 @@ public class OpenFoodFactsService {
             .retrieve()
             .bodyToMono(String.class)
             .doOnNext(rawJson -> log.info("Raw OpenFoodFacts response: {}", rawJson))
+            .doOnNext(rawJson -> {
+                try {
+                    ObjectMapper mapper = new ObjectMapper();
+                    OpenFoodFactsResponse response = mapper.readValue(rawJson, OpenFoodFactsResponse.class);
+                    if (response.getProduct() != null) {
+                        log.info("Product image URL: {}", response.getProduct().getImage_url());
+                    }
+                } catch (Exception e) {
+                    log.error("Error parsing response for logging: {}", e.getMessage());
+                }
+            })
             .map(rawJson -> {
                 try {
                     ObjectMapper mapper = new ObjectMapper();

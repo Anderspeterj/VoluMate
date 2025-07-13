@@ -38,6 +38,7 @@ public class ProductController {
             .map(product -> {
                 if (product != null) {
                     log.info("Successfully retrieved product: {}", product.getProductName());
+                    log.info("Product image URL: {}", product.getImage_url());
                     return ResponseEntity.ok(ApiResponse.success(product));
                 } else {
                     log.warn("Product not found for barcode: {}", barcode);

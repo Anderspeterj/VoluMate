@@ -31,6 +31,11 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 50,
+    position: 'absolute',
+    top: 100,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
   },
   scanButton: {
     flexDirection: 'row',

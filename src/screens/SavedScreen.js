@@ -37,10 +37,16 @@ const SavedScreen = () => {
 
   const renderItem = ({ item }) => (
     <View style={[styles.card, { backgroundColor: themeStyles.card }]}>
-      <Image source={{ uri: item.image_url }} style={styles.productImage} />
+      {item.image_url ? (
+        <Image source={{ uri: item.image_url }} style={styles.productImage} />
+      ) : (
+        <View style={[styles.productImage, { backgroundColor: '#e0e0e0', justifyContent: 'center', alignItems: 'center' }]}>
+          <Text style={{ color: '#757575', fontSize: 12 }}>No Image</Text>
+        </View>
+      )}
       <View style={styles.productInfo}>
         <Text style={[styles.productName, { color: themeStyles.text }]} numberOfLines={2}>{item.name}</Text>
-        <Text style={[styles.productScore, { color: item.rating_color }]}>{item.score}/10</Text>
+        <Text style={[styles.productScore, { color: item.rating_color || '#B0B0B0' }]}>{item.score !== null ? `${item.score}/10` : 'No score'}</Text>
       </View>
       <TouchableOpacity onPress={() => handleDelete(item.barcode)} style={styles.deleteButton}>
         <Ionicons name="trash-outline" size={24} color={themeStyles.secondaryText} />
@@ -75,22 +81,28 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         padding: 15,
+        position: 'absolute',
+        top: 100,
+        left: 0,
+        right: 0,
+        textAlign: 'center',
     },
     list: {
         paddingHorizontal: 15,
+        paddingTop: 200,
     },
     card: {
         flexDirection: 'row',
         alignItems: 'center',
-        borderRadius: 10,
-        padding: 10,
+        borderRadius: 0,
+        padding: 30,
         marginBottom: 10,
     },
     productImage: {
-        width: 60,
+        width: 30,
         height: 60,
         borderRadius: 8,
-        marginRight: 15,
+        marginRight: 25,
     },
     productInfo: {
         flex: 1,

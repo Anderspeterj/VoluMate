@@ -18,6 +18,11 @@ export const initDB = async () => {
 
 export const saveProduct = async (product) => {
   const { barcode, name, image_url, score, rating, rating_color } = product;
+  
+  console.log('DEBUG - Database save - Score:', score, 'Type:', typeof score);
+  console.log('DEBUG - Database save - Rating:', rating, 'Type:', typeof rating);
+  console.log('DEBUG - Database save - RatingColor:', rating_color, 'Type:', typeof rating_color);
+  
   const result = await db.runAsync(
     'INSERT OR REPLACE INTO products (barcode, name, image_url, score, rating, rating_color) VALUES (?, ?, ?, ?, ?, ?)',
     barcode,

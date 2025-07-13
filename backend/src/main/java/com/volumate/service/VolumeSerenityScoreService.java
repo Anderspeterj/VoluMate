@@ -20,27 +20,29 @@ public class VolumeSerenityScoreService {
     private static final List<String> BAD_KEYWORDS = Arrays.asList(
         "candy", "chocolate", "chips", "crisps", "soda", "sugar", "sweet", 
         "cake", "biscuit", "cookie", "ice-cream", "pizza", "burger", 
-        "processed", "artificial", "preservative", "high fructose", "trans fat"
+        "processed", "artificial", "preservative", "high fructose", "trans fat", "soda", "sugar", "sweet", "kunstigt"
     );
     
     public VolumeSerenityScore calculateScore(Product product) {
         log.debug("Calculating Volume Serenity Score for product: {}", product.getProductName());
         
         // Check if we have enough data to score the product
-        if (!product.hasValidData()) {
+     /*   if (!product.hasValidData()) {
             log.warn("Insufficient data to calculate score for product");
             return VolumeSerenityScore.cannotDetermine("Could not determine score from available data.");
-        }
+        } */
         
         String categories = product.getCategoriesLower();
         String productName = product.getProductNameLower();
+        String ingredients = product.getIngredientsText() != null ? product.getIngredientsText().toLowerCase() : "";
+
         
         int score = 5; // Start with neutral score
         int keywordMatches = 0;
         
         // Check for good keywords
         for (String keyword : GOOD_KEYWORDS) {
-            if (categories.contains(keyword) || productName.contains(keyword)) {
+            if (categories.contains(keyword) || productName.contains(keyword) || ingredients.contains(keyword)) {
                 score += 2;
                 keywordMatches++;
                 log.debug("Found good keyword: {}", keyword);
@@ -49,7 +51,7 @@ public class VolumeSerenityScoreService {
         
         // Check for bad keywords
         for (String keyword : BAD_KEYWORDS) {
-            if (categories.contains(keyword) || productName.contains(keyword)) {
+            if (categories.contains(keyword) || productName.contains(keyword) || ingredients.contains(keyword)) {
                 score -= 3;
                 keywordMatches++;
                 log.debug("Found bad keyword: {}", keyword);
@@ -59,7 +61,7 @@ public class VolumeSerenityScoreService {
         // If no relevant keywords found, we can't reliably score
         if (keywordMatches == 0) {
             log.warn("No relevant keywords found for product: {}", product.getProductName());
-            return VolumeSerenityScore.cannotDetermine("Could not determine score from available data.");
+            return VolumeSerenityScore.cannotDetermine("Could nt determine score from available data.");
         }
         
         // Clamp score between 0 and 10

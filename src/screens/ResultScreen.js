@@ -27,6 +27,8 @@ const ResultScreen = ({ route, navigation }) => {
         }
 
         const productData = await apiClient.getProductByBarcode(barcode);
+        console.log('Product data received:', JSON.stringify(productData, null, 2));
+        console.log('Image URL:', productData.image_url);
         setProduct(productData);
       } catch (e) {
         setError('Failed to connect to the food database.');
@@ -43,17 +45,40 @@ const ResultScreen = ({ route, navigation }) => {
   const rating = product?.volumeSerenityRating;
   const ratingColor = product?.volumeSerenityRatingColor;
   
+  console.log('DEBUG - Product object:', JSON.stringify(product, null, 2));
+  console.log('DEBUG - Extracted score:', score, 'Type:', typeof score);
+  console.log('DEBUG - Extracted rating:', rating, 'Type:', typeof rating);
+  console.log('DEBUG - Extracted ratingColor:', ratingColor, 'Type:', typeof ratingColor);
+  
   const handleSave = async () => {
+    console.log('DEBUG - Score value:', score, 'Type:', typeof score);
+    console.log('DEBUG - Rating value:', rating, 'Type:', typeof rating);
+    console.log('DEBUG - RatingColor value:', ratingColor, 'Type:', typeof ratingColor);
+    
+    // Only save if we have a valid score (including 0)
+    if (score === null || score === undefined) {
+      console.log('Cannot save product without a score');
+      return;
+    }
+    
     const productToSave = {
       barcode,
-      name: product.productName,
-      image_url: product.imageUrl,
-      score,
-      rating,
-      rating_color: ratingColor,
+      name: product.displayName || 'Unknown Product',
+      image_url: product.image_url,
+      score: score,
+      rating: rating || 'No rating available',
+      rating_color: ratingColor || '#B0B0B0',
     };
-    await saveProduct(productToSave);
-    setIsSaved(true);
+    
+    console.log('DEBUG - Product to save:', JSON.stringify(productToSave, null, 2));
+    
+    try {
+      await saveProduct(productToSave);
+      setIsSaved(true);
+    } catch (error) {
+      console.error('Error saving product:', error);
+      // You could show an alert here if you want
+    }
   };
 
 
@@ -71,23 +96,21 @@ const ResultScreen = ({ route, navigation }) => {
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={[styles.card, { backgroundColor: themeStyles.card }]}>
             <Text style={[styles.title, { color: themeStyles.text }]}>{product.displayName || 'No product name'}</Text>
-            {product.imageUrl ? (
-              <Image source={{ uri: product.imageUrl }} style={styles.productImage} />
+            {product.image_url ? (
+              <Image source={{ uri: product.image_url }} style={styles.productImage} />
             ) : (
               <View style={styles.imagePlaceholder}>
                 <Text style={{color: themeStyles.secondaryText}}>No Image Available</Text>
               </View>
             )}
-             {score !== null && (
-              <TouchableOpacity
-                onPress={handleSave}
-                disabled={isSaved}
-                style={[styles.saveButton, { backgroundColor: isSaved ? themeStyles.secondaryText : themeStyles.accent }]}
-              >
-                <Ionicons name={isSaved ? 'checkmark-done-outline' : 'bookmark-outline'} size={20} color={themeStyles.text} />
-                <Text style={styles.saveButtonText}>{isSaved ? 'Saved' : 'Save for Later'}</Text>
-              </TouchableOpacity>
-            )}
+             <TouchableOpacity
+               onPress={handleSave}
+               disabled={isSaved}
+               style={[styles.saveButton, { backgroundColor: isSaved ? themeStyles.secondaryText : themeStyles.accent }]}
+             >
+               <Ionicons name={isSaved ? 'checkmark-done-outline' : 'bookmark-outline'} size={20} color={themeStyles.text} />
+               <Text style={styles.saveButtonText}>{isSaved ? 'Saved' : 'Save for Later'}</Text>
+             </TouchableOpacity>
           </View>
           <View style={[styles.card, { backgroundColor: themeStyles.card }]}>
             <Text style={styles.scoreTitle}>Volume Serenity Score</Text>
@@ -96,8 +119,10 @@ const ResultScreen = ({ route, navigation }) => {
                 <Text style={[styles.score, { color: ratingColor }]}>{score}</Text>
                 <Text style={[styles.scoreTotal, { color: themeStyles.secondaryText }]}>/ 10</Text>
               </View>
-            ) : null}
-            <Text style={[styles.rating, { color: themeStyles.text }]}>{rating}</Text>
+            ) : (
+              <Text style={[styles.score, { color: '#B0B0B0' }]}>?</Text>
+            )}
+            <Text style={[styles.rating, { color: themeStyles.text }]}>{rating || 'No rating available'}</Text>
           </View>
         </ScrollView>
       )

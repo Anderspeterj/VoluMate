@@ -31,7 +31,7 @@ public class Product {
     private String categories;
     
     @JsonProperty("image_url")
-    private String imageUrl;
+    private String image_url;
     
     @JsonProperty("ingredients_text")
     private String ingredientsText;
@@ -66,9 +66,9 @@ public class Product {
     private String volumeSerenityRatingColor;
     
     // Helper methods
-    public boolean hasValidData() {
+  /*  public boolean hasValidData() {
         return productName != null && !productName.trim().isEmpty();
-    }
+    }  */
     
     public String getCategoriesLower() {
         return categories != null ? categories.toLowerCase() : "";
