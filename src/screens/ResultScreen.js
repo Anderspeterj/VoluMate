@@ -2,60 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Image, Button, ScrollView, TouchableOpacity } from 'react-native';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { saveProduct, getProductByBarcode } from '../utils/database';
+import { apiClient } from '../utils/api';
 import { Ionicons } from '@expo/vector-icons';
 
-const calculateVolumeSerenityScore = (product) => {
-  // We need a product with at least a category or a name to score it.
-  if (!product || (!product.categories && !product.product_name)) {
-    return { score: null, rating: 'Could not determine score.' };
-  }
-
-  const categories = product.categories ? product.categories.toLowerCase() : '';
-  const productName = product.product_name ? product.product_name.toLowerCase() : '';
-
-  // Simple keyword-based scoring
-  const goodKeywords = ['oat', 'rye', 'bread', 'vegetable', 'fruit', 'water', 'milk', 'yogurt', 'cheese', 'egg', 'chicken', 'fish', 'nuts', 'lentil', 'bean', 'legume'];
-  const badKeywords = ['candy', 'chocolate', 'chips', 'crisps', 'soda', 'sugar', 'sweet', 'cake', 'biscuit', 'cookie', 'ice-cream', 'pizza', 'burger'];
-
-  let score = 5; // Start with a neutral score of 5/10
-  let keywordMatches = 0;
-
-  goodKeywords.forEach(keyword => {
-    if (categories.includes(keyword) || productName.includes(keyword)) {
-      score += 2;
-      keywordMatches++;
-    }
-  });
-
-  badKeywords.forEach(keyword => {
-    if (categories.includes(keyword) || productName.includes(keyword)) {
-      score -= 3;
-      keywordMatches++;
-    }
-  });
-
-  // If we didn't find any relevant keywords, we can't reliably score the product.
-  if (keywordMatches === 0) {
-    return { score: null, rating: 'Could not determine score from available data.' };
-  }
-  
-  score = Math.max(0, Math.min(10, score)); // Clamp score between 0 and 10
-
-  let rating = 'Okay';
-  let ratingColor = '#FFA500'; // Orange for neutral
-  if (score >= 8) {
-    rating = 'Excellent Choice!';
-    ratingColor = '#4CAF50'; // Green for good
-  } else if (score >= 6) {
-    rating = 'Good Choice';
-    ratingColor = '#8BC34A'; // Light Green for good-ish
-  } else if (score <= 3) {
-    rating = 'Consider a Healthier Option';
-    ratingColor = '#F44336'; // Red for bad
-  }
-
-  return { score: score, rating, ratingColor };
-};
+// Score calculation is now handled by the Java backend
 
 
 const ResultScreen = ({ route, navigation }) => {
@@ -76,13 +26,8 @@ const ResultScreen = ({ route, navigation }) => {
             setIsSaved(true);
         }
 
-        const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${barcode}.json`);
-        const data = await response.json();
-        if (data.status === 1 && data.product) {
-          setProduct(data.product);
-        } else {
-          setError('Product not found in the database.');
-        }
+        const productData = await apiClient.getProductByBarcode(barcode);
+        setProduct(productData);
       } catch (e) {
         setError('Failed to connect to the food database.');
       } finally {
@@ -93,13 +38,16 @@ const ResultScreen = ({ route, navigation }) => {
     fetchProduct();
   }, [barcode, navigation]);
 
-  const { score, rating, ratingColor } = calculateVolumeSerenityScore(product);
+  // Get score from the backend response
+  const score = product?.volumeSerenityScore;
+  const rating = product?.volumeSerenityRating;
+  const ratingColor = product?.volumeSerenityRatingColor;
   
   const handleSave = async () => {
     const productToSave = {
       barcode,
-      name: product.product_name,
-      image_url: product.image_url,
+      name: product.productName,
+      image_url: product.imageUrl,
       score,
       rating,
       rating_color: ratingColor,
@@ -122,9 +70,9 @@ const ResultScreen = ({ route, navigation }) => {
       return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={[styles.card, { backgroundColor: themeStyles.card }]}>
-            <Text style={[styles.title, { color: themeStyles.text }]}>{product.product_name || 'No product name'}</Text>
-            {product.image_url ? (
-              <Image source={{ uri: product.image_url }} style={styles.productImage} />
+            <Text style={[styles.title, { color: themeStyles.text }]}>{product.displayName || 'No product name'}</Text>
+            {product.imageUrl ? (
+              <Image source={{ uri: product.imageUrl }} style={styles.productImage} />
             ) : (
               <View style={styles.imagePlaceholder}>
                 <Text style={{color: themeStyles.secondaryText}}>No Image Available</Text>
