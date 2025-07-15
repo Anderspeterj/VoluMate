@@ -8,6 +8,7 @@ import HomeScreen from '../screens/HomeScreen';
 import ScannerScreen from '../screens/ScannerScreen';
 import SavedScreen from '../screens/SavedScreen';
 import ResultScreen from '../screens/ResultScreen';
+import FAQScreen from '../screens/FAQScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -41,6 +42,15 @@ const SavedStack = () => {
   )
 }
 
+const FAQStack = () => {
+  const { styles: themeStyles } = useContext(ThemeContext);
+  return (
+    <Stack.Navigator screenOptions={commonStackOptions(themeStyles)}>
+      <Stack.Screen name="FAQList" component={FAQScreen} options={{ headerShown: false }}/>
+    </Stack.Navigator>
+  )
+}
+
 const AppNavigator = () => {
   const { styles: themeStyles } = useContext(ThemeContext);
   return (
@@ -53,6 +63,8 @@ const AppNavigator = () => {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'SavedStack') {
             iconName = focused ? 'bookmark' : 'bookmark-outline';
+          } else if (route.name === 'FAQStack') {
+            iconName = focused ? 'help-circle' : 'help-circle-outline';
           }
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -69,6 +81,7 @@ const AppNavigator = () => {
     >
       <Tab.Screen name="HomeStack" component={HomeStack} options={{ title: 'Home' }} />
       <Tab.Screen name="SavedStack" component={SavedStack} options={{ title: 'Saved' }} />
+      <Tab.Screen name="FAQStack" component={FAQStack} options={{ title: 'FAQ' }} />
     </Tab.Navigator>
   );
 };

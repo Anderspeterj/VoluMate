@@ -3,13 +3,14 @@ package com.volumate.service;
 import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 @Service
-public class SerientyIndexService {
+public class SatietyIndexService {
     
     private final Map<String, Integer> satietyIndex = new HashMap<>();
     
-    public SerientyIndexService() {
+    public SatietyIndexService() {
         initializeSatietyIndex();
     }
     
@@ -85,9 +86,28 @@ public class SerientyIndexService {
         satietyIndex.put("fruit", 150);
     }
 
-    public Integer calculateSatietyIndex(String foodName) {
-        Integer index = 
+    public Integer calculateSatietyIndex(Product product) {
+    if (product == null) {
+        return null;
     }
+    List<String> ingredients = extractIngredients(product.getIngredientsText());
+
+    List<Integer> satietyScores = new ArrayList<>();
+    for (String ingredient : ingredients) {
+        Integer score = getSatietyIndex(ingredient);
+        if (score != null) {
+            satietyScores.add(score);
+        }
+    }
+    
+    if (satietyScores.isEmpty()) {
+        return getSatietyIndex(product.getProductName());
+    }
+    
+    double sum = satietyScores.stream().mapToInt(Integer::intValue).sum();
+    int average = (int) Math.round(sum / satietyScores.size());
+    return applyEvidenceBasedAdjustments(product, average);
+}
     
     public Integer getSatietyIndex(String foodName) {
         if (foodName == null) {
@@ -143,4 +163,118 @@ public class SerientyIndexService {
     public Map<String, Integer> getAllSatietyIndices() {
         return new HashMap<>(satietyIndex);
     }
+    // extract ingredients from product.getIngredientsText()¨
+    private List<String> extractIngredients(String ingredientsText) {
+        List<String> ingredients = new ArrayList<>();
+        if (ingredientsText != null) {
+            String[] parts = ingredientsText.toLowerCase()
+                .split("[,;()]");
+            
+            for (String part : parts) {
+                String cleaned = part.trim();
+                if (!cleaned.isEmpty() && cleaned.length() > 2) {
+                    ingredients.add(cleaned);
+                }
+            }
+        }
+        return ingredients;
+    }
+
+    private Integer applyEvidenceBasedAdjustments(Product product, int baseSatiety) {
+        double adjustedSatiety = baseSatiety;
+        
+        // NOVA Group adjustment (processing level)
+        String novaGroup = product.getNovaGroup();
+        if (novaGroup != null) {
+            adjustedSatiety *= switch (novaGroup) {
+                case "1" -> 1.0;    // Unprocessed - no reduction
+                case "2" -> 0.95;   // Processed culinary - 5% reduction
+                case "3", "4" -> 0.8; // Processed & ultra-processed - 20% reduction
+                default -> 1.0;     // Unknown - no reduction
+            };
+        }
+        
+        // Sugar content adjustment
+        Map<String, Object> nutriments = product.getNutriments();
+        if (nutriments != null && nutriments.containsKey("sugars_100g")) {
+            Double sugars = getDoubleValue(nutriments.get("sugars_100g"));
+            if (sugars != null && sugars >= 4) {
+                if (sugars >= 12) {
+                    adjustedSatiety *= 0.85;  // Fixed: comma -> period
+                } else if (sugars >= 10) {
+                    adjustedSatiety *= 0.88;  // Fixed: comma -> period
+                } else if (sugars >= 8) {    
+                    adjustedSatiety *= 0.90;  // Fixed: comma -> period
+                } else if (sugars >= 6) {
+                    adjustedSatiety *= 0.92;  // Fixed: comma -> period
+                } else if (sugars >= 4) {
+                    adjustedSatiety *= 1.0;   // Fixed: comma -> period
+                }
+            }
+        }
+        
+        // Water content adjustment (important factor for satiety)
+        if (nutriments != null && nutriments.containsKey("water_100g")) {
+            Double waterContent = getDoubleValue(nutriments.get("water_100g"));
+            if (waterContent != null) {
+                if (waterContent >= 80) {
+                    adjustedSatiety *= 1.15;  // High water content (fruits, vegetables) - 15% boost
+                } else if (waterContent >= 60) {
+                    adjustedSatiety *= 1.10;  // Medium-high water content - 10% boost
+                } else if (waterContent >= 40) {
+                    adjustedSatiety *= 1.05;  // Medium water content - 5% boost
+                }
+                // Low water content gets no boost
+            }
+        }
+        
+        // Protein content adjustment (protein is highly satiating)
+        if (nutriments != null && nutriments.containsKey("proteins_100g")) {
+            Double proteinContent = getDoubleValue(nutriments.get("proteins_100g"));
+            if (proteinContent != null) {
+                if (proteinContent >= 20) {
+                    adjustedSatiety *= 1.20;  // High protein (≥20g/100g) - 20% boost
+                } else if (proteinContent >= 15) {
+                    adjustedSatiety *= 1.15;  // Medium-high protein (15-20g/100g) - 15% boost
+                } else if (proteinContent >= 10) {
+                    adjustedSatiety *= 1.10;  // Medium protein (10-15g/100g) - 10% boost
+                } else if (proteinContent >= 5) {
+                    adjustedSatiety *= 1.05;  // Low-medium protein (5-10g/100g) - 5% boost
+                }
+            }
+        }
+        
+        // Fiber content adjustment (fiber is highly satiating)
+        if (nutriments != null && nutriments.containsKey("fiber_100g")) {
+            Double fiberContent = getDoubleValue(nutriments.get("fiber_100g"));
+            if (fiberContent != null) {
+                if (fiberContent >= 8) {
+                    adjustedSatiety *= 1.15;  // High fiber (≥8g/100g) - 15% boost
+                } else if (fiberContent >= 5) {
+                    adjustedSatiety *= 1.10;  // Medium-high fiber (5-8g/100g) - 10% boost
+                } else if (fiberContent >= 3) {
+                    adjustedSatiety *= 1.05;  // Medium fiber (3-5g/100g) - 5% boost
+                }
+            }
+        }
+        
+        return (int) Math.round(adjustedSatiety);
+    }
+
+    // Helper method to convert Object to Double
+    private Double getDoubleValue(Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        } else if (value instanceof String) {
+            try {
+                return Double.parseDouble((String) value);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+
+
 }

@@ -117,7 +117,7 @@ const ResultScreen = ({ route, navigation }) => {
             {score !== null ? (
               <View style={styles.scoreContainer}>
                 <Text style={[styles.score, { color: ratingColor }]}>{score}</Text>
-                <Text style={[styles.scoreTotal, { color: themeStyles.secondaryText }]}>/ 10</Text>
+                <Text style={[styles.scoreTotal, { color: themeStyles.secondaryText }]}>/ 300</Text>
               </View>
             ) : (
               <Text style={[styles.score, { color: '#B0B0B0' }]}>?</Text>
