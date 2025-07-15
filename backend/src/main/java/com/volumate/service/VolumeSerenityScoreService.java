@@ -10,14 +10,17 @@ import java.util.List;
 @Service
 @Slf4j
 public class VolumeSerenityScoreService {
+    @Autowired
+    private SerientyIndexService serientyIndexService;
     
+    private 
     private static final List<String> GOOD_KEYWORDS = Arrays.asList(
         "oat", "rye", "bread", "vegetable", "fruit", "water", "milk", 
         "yogurt", "cheese", "egg", "chicken", "fish", "nuts", "lentil", 
         "bean", "legume", "whole grain", "organic", "natural", "fresh"
     );
     
-    private static final List<String> BAD_KEYWORDS = Arrays.asList(
+    private static final List<String> LOW_SATIETY_INDICATORS = Arrays.asList(
         "candy", "chocolate", "chips", "crisps", "soda", "sugar", "sweet", 
         "cake", "biscuit", "cookie", "ice-cream", "pizza", "burger", 
         "processed", "artificial", "preservative", "high fructose", "trans fat", "soda", "sugar", "sweet", "kunstigt"
@@ -31,6 +34,12 @@ public class VolumeSerenityScoreService {
             log.warn("Insufficient data to calculate score for product");
             return VolumeSerenityScore.cannotDetermine("Could not determine score from available data.");
         } */
+
+        public Integer calculateSatietyIndex(String foodName) {
+            for(int i = 0; i < satietyIndex.length; i++) {
+                
+        }
+       
         
         String categories = product.getCategoriesLower();
         String productName = product.getProductNameLower();
