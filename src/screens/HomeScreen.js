@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -7,35 +7,60 @@ const HomeScreen = ({ navigation }) => {
   const { styles: themeStyles } = useContext(ThemeContext);
 
   return (
-    <View style={[styles.container, { backgroundColor: themeStyles.background }]}>
-      <Text style={[styles.title, { color: themeStyles.text }]}>Food Scanner</Text>
-      <TouchableOpacity 
-        style={[styles.scanButton, { backgroundColor: themeStyles.primary }]} 
-        onPress={() => navigation.navigate('Scanner')}
-      >
-        <Ionicons name="barcode-outline" size={32} color={themeStyles.text} />
-        <Text style={[styles.scanButtonText, { color: themeStyles.text }]}>Scan a Product</Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeStyles.background }]}>
+      <View style={styles.contentContainer}>
+        <View style={styles.headerSection}>
+          <Text style={[styles.title, { color: themeStyles.text }]}>Mæthedsscanner</Text>
+          <Text style={[styles.description, { color: themeStyles.secondaryText }]}>
+            Scan dine madvarers stregkode og få deres mæthedsscore.{'\n'}
+            Jo højere score, jo mere mættende er maden.
+          </Text>
+        </View>
+        <View style={styles.buttonSection}>
+          <TouchableOpacity 
+            style={[styles.scanButton, { backgroundColor: themeStyles.primary }]} 
+            onPress={() => navigation.navigate('Scanner')}
+          >
+            <Ionicons name="barcode-outline" size={32} color={themeStyles.text} />
+            <Text style={[styles.scanButtonText, { color: themeStyles.text }]}>Scan via stregkode</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+    padding: 20,
+  },
+  headerSection: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    paddingTop: '15%',
+  },
+  buttonSection: {
+    paddingBottom: '15%',
+    alignItems: 'center',
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 50,
-    position: 'absolute',
-    top: 100,
-    left: 0,
-    right: 0,
+    marginBottom: 30,
     textAlign: 'center',
+  },
+  description: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 30,
+    lineHeight: 24,
+    paddingHorizontal: 10,
   },
   scanButton: {
     flexDirection: 'row',

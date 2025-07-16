@@ -1,5 +1,5 @@
 // API configuration for VoluMate backend
-const API_BASE_URL = 'http://192.168.8.41:8080/api'; // Updated to local IP for device access
+const API_BASE_URL = 'http://192.168.8.41:8080/api'; // Local IP for device access
 
 export const apiClient = {
   async getProductByBarcode(barcode) {

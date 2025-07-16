@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { ThemeContext } from '../contexts/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function ScannerScreen({ navigation }) {
   const [permission, requestPermission] = useCameraPermissions();
@@ -25,7 +26,13 @@ export default function ScannerScreen({ navigation }) {
         <Text style={{ color: themeStyles.text, marginBottom: 20, fontSize: 18, textAlign: 'center' }}>
           We need your permission to show the camera
         </Text>
-        <Button onPress={requestPermission} title="Grant Permission" color={themeStyles.primary} />
+        <TouchableOpacity 
+          style={[styles.scanButton, { backgroundColor: themeStyles.primary }]}
+          onPress={requestPermission}
+        >
+          <Ionicons name="camera-outline" size={32} color={themeStyles.text} />
+          <Text style={[styles.scanButtonText, { color: themeStyles.text }]}>Grant Permission</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -54,11 +61,15 @@ export default function ScannerScreen({ navigation }) {
         style={StyleSheet.absoluteFillObject}
       />
       {scanned && (
-        <Button
-          title={'Tap to Scan Again'}
-          onPress={() => setScanned(false)}
-          color={themeStyles.primary}
-        />
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity 
+            style={[styles.scanButton, { backgroundColor: themeStyles.primary }]}
+            onPress={() => setScanned(false)}
+          >
+            <Ionicons name="barcode-outline" size={32} color={themeStyles.text} />
+            <Text style={[styles.scanButtonText, { color: themeStyles.text }]}>Tryk for at scanne igen</Text>
+          </TouchableOpacity>
+        </View>
       )}
     </View>
   );
@@ -68,5 +79,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 30,
+    left: 20,
+    right: 20,
+    alignItems: 'center',
+  },
+  scanButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    width: '100%',
+  },
+  scanButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 15,
   },
 }); 

@@ -1,11 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { getSavedProducts, deleteProduct } from '../utils/database';
 import { Ionicons } from '@expo/vector-icons';
 
-const SavedScreen = () => {
+const SavedScreen = ({ navigation }) => {
   const { styles: themeStyles } = useContext(ThemeContext);
   const [savedProducts, setSavedProducts] = useState([]);
   const isFocused = useIsFocused();
@@ -15,7 +15,7 @@ const SavedScreen = () => {
     setSavedProducts(products);
   };
 
-  useState(() => {
+  useEffect(() => {
     if (isFocused) {
       loadProducts();
     }
@@ -46,7 +46,7 @@ const SavedScreen = () => {
       )}
       <View style={styles.productInfo}>
         <Text style={[styles.productName, { color: themeStyles.text }]} numberOfLines={2}>{item.name}</Text>
-        <Text style={[styles.productScore, { color: item.rating_color || '#B0B0B0' }]}>{item.score !== null ? `${item.score}/10` : 'No score'}</Text>
+        <Text style={[styles.productScore, { color: item.rating_color || '#B0B0B0' }]}>{item.score !== null ? `${item.score}/100` : 'No score'}</Text>
       </View>
       <TouchableOpacity onPress={() => handleDelete(item.barcode)} style={styles.deleteButton}>
         <Ionicons name="trash-outline" size={24} color={themeStyles.secondaryText} />
@@ -56,7 +56,21 @@ const SavedScreen = () => {
 
   return (
     <View style={[styles.container, { backgroundColor: themeStyles.background }]}>
-      <Text style={[styles.title, { color: themeStyles.text }]}>Saved Products</Text>
+      <View style={[styles.headerContainer, { backgroundColor: themeStyles.background }]}>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons 
+            name="arrow-back" 
+            size={24} 
+            color={themeStyles.text}
+          />
+        </TouchableOpacity>
+        <Text style={[styles.title, { color: themeStyles.text }]}>
+          Gemte Produkter
+        </Text>
+      </View>
       {savedProducts.length > 0 ? (
         <FlatList
           data={savedProducts}
@@ -77,25 +91,36 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    headerContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+        paddingTop: 60,
+        paddingBottom: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+        zIndex: 1, // Ensure header stays above list
+        elevation: 1, // For Android
+    },
+    backButton: {
+        padding: 8,
+        marginRight: 8,
+    },
     title: {
-        fontSize: 28,
+        fontSize: 24,
         fontWeight: 'bold',
-        padding: 15,
-        position: 'absolute',
-        top: 100,
-        left: 0,
-        right: 0,
-        textAlign: 'center',
+        flex: 1,
     },
     list: {
-        paddingHorizontal: 15,
-        paddingTop: 200,
+        paddingHorizontal: 16,
+        paddingTop: 12,
     },
     card: {
         flexDirection: 'row',
         alignItems: 'center',
-        borderRadius: 0,
-        padding: 30,
+        borderRadius: 12,
+        padding: 16,
+        marginVertical: 6,
         marginBottom: 10,
     },
     productImage: {
@@ -122,7 +147,10 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
+    separator: {
+        height: 12,
+    },
 });
 
 export default SavedScreen; 

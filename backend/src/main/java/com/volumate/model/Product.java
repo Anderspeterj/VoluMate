@@ -30,6 +30,9 @@ public class Product {
     @JsonProperty("categories")
     private String categories;
     
+    @JsonProperty("_keywords")
+    private List<String> keywords;
+    
     @JsonProperty("image_url")
     private String image_url;
     
@@ -86,5 +89,14 @@ public class Product {
         } else {
             return null;
         }
+    }
+
+    public List<String> getKeywordsLower() {
+        if (keywords == null) {
+            return List.of(); // Return empty list instead of null
+        }
+        return keywords.stream()
+            .map(String::toLowerCase)
+            .toList();
     }
 } 

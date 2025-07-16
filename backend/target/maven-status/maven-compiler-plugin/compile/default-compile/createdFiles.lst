@@ -1,11 +1,12 @@
+com\volumate\config\CacheConfig.class
+com\volumate\model\ApiResponse.class
+com\volumate\config\WebConfig.class
+com\volumate\service\VolumeSerenityScoreService.class
 com\volumate\service\ProductService.class
 com\volumate\service\OpenFoodFactsService.class
 com\volumate\controller\ProductController.class
 com\volumate\service\VolumeSerenityScoreService$VolumeSerenityScore.class
-com\volumate\config\CacheConfig.class
-com\volumate\model\ApiResponse.class
-com\volumate\config\WebConfig.class
 com\volumate\model\Product.class
+com\volumate\service\SatietyIndexService.class
 com\volumate\VoluMateBackendApplication.class
 com\volumate\model\OpenFoodFactsResponse.class
-com\volumate\service\VolumeSerenityScoreService.class

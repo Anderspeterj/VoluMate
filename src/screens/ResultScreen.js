@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Image, Button, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Image, ScrollView, TouchableOpacity } from 'react-native';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { saveProduct, getProductByBarcode } from '../utils/database';
 import { apiClient } from '../utils/api';
@@ -17,7 +17,7 @@ const ResultScreen = ({ route, navigation }) => {
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    navigation.setOptions({ title: 'Scan Result' });
+    navigation.setOptions({ title: 'Scan Resultat' });
     const fetchProduct = async () => {
       try {
         // Check if product is already in our DB
@@ -84,11 +84,25 @@ const ResultScreen = ({ route, navigation }) => {
 
   const renderContent = () => {
     if (loading) {
-      return <ActivityIndicator size="large" color={themeStyles.primary} />
+      return (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={themeStyles.primary} />
+        </View>
+      );
     }
     
     if (error) {
-      return <Text style={[styles.errorText, { color: themeStyles.accent }]}>{error}</Text>;
+      return (
+        <View style={styles.centerContainer}>
+          <Text style={[styles.errorText, { color: themeStyles.accent }]}>{error}</Text>
+          <TouchableOpacity 
+            style={[styles.retryButton, { backgroundColor: themeStyles.primary }]}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={[styles.retryButtonText, { color: themeStyles.text }]}>Prøv igen</Text>
+          </TouchableOpacity>
+        </View>
+      );
     }
 
     if (product) {
@@ -109,11 +123,11 @@ const ResultScreen = ({ route, navigation }) => {
                style={[styles.saveButton, { backgroundColor: isSaved ? themeStyles.secondaryText : themeStyles.accent }]}
              >
                <Ionicons name={isSaved ? 'checkmark-done-outline' : 'bookmark-outline'} size={20} color={themeStyles.text} />
-               <Text style={styles.saveButtonText}>{isSaved ? 'Saved' : 'Save for Later'}</Text>
+               <Text style={styles.saveButtonText}>{isSaved ? 'Saved' : 'Gem til senere'}</Text>
              </TouchableOpacity>
           </View>
           <View style={[styles.card, { backgroundColor: themeStyles.card }]}>
-            <Text style={styles.scoreTitle}>Volume Serenity Score</Text>
+            <Text style={styles.scoreTitle}>Mæthedsscore</Text>
             {score !== null ? (
               <View style={styles.scoreContainer}>
                 <Text style={[styles.score, { color: ratingColor }]}>{score}</Text>
@@ -134,7 +148,13 @@ const ResultScreen = ({ route, navigation }) => {
     <View style={[styles.container, { backgroundColor: themeStyles.background }]}>
       {renderContent()}
       <View style={styles.buttonContainer}>
-          <Button title="Scan Another Product" onPress={() => navigation.goBack()} color={themeStyles.primary} />
+        <TouchableOpacity 
+          style={[styles.scanAgainButton, { backgroundColor: themeStyles.primary }]}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="barcode-outline" size={32} color={themeStyles.text} />
+          <Text style={[styles.scanAgainButtonText, { color: themeStyles.text }]}>Scan et andet produkt</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -206,12 +226,33 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 18,
     textAlign: 'center',
+    marginBottom: 20,
   },
   buttonContainer: {
     position: 'absolute',
     bottom: 20,
     left: 20,
     right: 20,
+    alignItems: 'center',
+  },
+  scanAgainButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    width: '100%',
+  },
+  scanAgainButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 15,
   },
   saveButton: {
     flexDirection: 'row',
@@ -225,6 +266,22 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
     marginLeft: 10,
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  retryButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 25,
+    marginTop: 15,
+  },
+  retryButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

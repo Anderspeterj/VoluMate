@@ -19,7 +19,7 @@ public class VolumeSerenityScoreService {
 
         if (satietyScore == null) {
             log.warn("Could not calculate satiety score for product: {}", product.getProductName());
-            return VolumeSerenityScore.cannotDetermine("Could not determine score from available data.");
+            return VolumeSerenityScore.cannotDetermine("Desværre ingen mæthedsscore kunne findes. Det kan være fordi det er en drikkevare.");
         }
 
         VolumeSerenityScore finalScore = createVolumeSerenityScore(satietyScore);
@@ -35,22 +35,22 @@ public class VolumeSerenityScoreService {
         String ratingColor;
         
         if (score >= 250) {
-            rating = "Excellent Choice!";
+            rating = "Super mættende!";
             ratingColor = "#4CAF50";
         } else if (score >= 200) {
-            rating = "Very Good Choice";
+            rating = "Meget mættende!";
             ratingColor = "#8BC34A";
         } else if (score >= 150) {
-            rating = "Good Choice";
-            ratingColor = "#CDDC39";
+            rating = "Godt mættende!";
+            ratingColor = "#8BC34A";
         } else if (score >= 100) {
-            rating = "Okay";
-            ratingColor = "#FFA500";
+            rating = "Middel";
+            ratingColor = "#FFD700";
         } else if (score >= 50) {
-            rating = "Consider a Healthier Option";
+            rating = "Overvej et andet alternativ hvis du vil undgå at blive sulten hurtigt igen";
             ratingColor = "#FF9800";
         } else {
-            rating = "Poor Choice";
+            rating = "Dårligt mættende!";
             ratingColor = "#F44336";
         }
         
