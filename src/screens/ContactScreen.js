@@ -20,13 +20,13 @@ const ContactScreen = () => {
           </Text>
           <Text style={[
             styles.description,
-            { color: themeStyles.text }
+            { color: themeStyles.secondaryText }
           ]}>
             Vi er i beta-testning og har brug for din hjælp til at forbedre vores mæthedsscore-system.
           </Text>
           <Text style={[
             styles.contactInfo,
-            { color: themeStyles.text }
+            { color: themeStyles.secondaryText }
           ]}>
             Hvis du finder et produkt hvor:
             {'\n\n'}• Der mangler en mæthedsscore
@@ -42,7 +42,7 @@ const ContactScreen = () => {
           </Text>
           <Text style={[
             styles.thankYou,
-            { color: themeStyles.text }
+            { color: themeStyles.secondaryText }
           ]}>
             Tak for din hjælp med at forbedre appen!
           </Text>
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-    paddingTop: 100, // Tilføjer ekstra padding i toppen
+    paddingTop: 75, // Tilføjer ekstra padding i toppen
     flex: 1,
   },
   title: {

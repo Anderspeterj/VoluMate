@@ -41,12 +41,12 @@ const styles = StyleSheet.create({
   },
   headerSection: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
-    paddingTop: '15%',
+    paddingTop: '25%',
   },
   buttonSection: {
-    paddingBottom: '15%',
+    paddingBottom: '5%',
     alignItems: 'center',
   },
   title: {

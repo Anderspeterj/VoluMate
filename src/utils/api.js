@@ -1,5 +1,6 @@
 // API configuration for VoluMate backend
-const API_BASE_URL = 'http://192.168.8.41:8080/api'; // Local IP for device access
+// Determine base URL based on environment
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://volumate-backend-env.eba-eymn8jjm.eu-north-1.elasticbeanstalk.com/api';
 
 export const apiClient = {
   async getProductByBarcode(barcode) {
