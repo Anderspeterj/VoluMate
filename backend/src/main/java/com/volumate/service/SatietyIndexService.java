@@ -81,7 +81,10 @@ public class SatietyIndexService {
         satietyIndex.put("grain bread", 154);
         satietyIndex.put("whole meal bread", 157);
         satietyIndex.put("rugbrød", 170);
-        satietyIndex.put("fuldkorn", 128);
+        satietyIndex.put("fuldkorn", 154);
+        satietyIndex.put("fuldkornbrød", 154);
+        satietyIndex.put("fullkorn", 154);
+        satietyIndex.put("fullkornbrød", 154);
         satietyIndex.put("smør", 55);
         satietyIndex.put("butter", 55);
         satietyIndex.put("brown pasta", 188);
@@ -99,6 +102,11 @@ public class SatietyIndexService {
         satietyIndex.put("makrel", 185);
         satietyIndex.put("ling fish", 225);
         satietyIndex.put("fish", 225);
+        satietyIndex.put("tuna", 225);
+        satietyIndex.put("tun", 190);
+        satietyIndex.put("salmon", 170);
+        satietyIndex.put("laks", 170);
+
         
         // Fruits
         satietyIndex.put("bananas", 118);
@@ -131,6 +139,18 @@ public class SatietyIndexService {
             return null;
         }
 
+        // Check for grain/fuldkorn products in keywords FIRST (highest priority)
+        List<String> keywords = product.getKeywordsLower();
+        if (keywords != null) {
+            boolean isGrainProduct = keywords.stream().anyMatch(k -> 
+                k.equals("grain") || k.equals("grain bread") ||
+                k.equals("fuldkorn") || k.equals("fuldkornbrød") ||
+                k.equals("fullkorn") || k.equals("fullkornbrød"));
+            if (isGrainProduct) {
+                return applyEvidenceBasedAdjustments(product, 154, false);
+            }
+        }
+
         // First check categories for priority matches (like rugbrød)
         String categories = product.getCategories();
         if (categories != null) {
@@ -147,7 +167,6 @@ public class SatietyIndexService {
         }
 
         // If no priority match was found, continue with normal category matching
-        List<String> keywords = product.getKeywordsLower();
         
         // Check for oats in categories
         boolean isOatProduct = false;
@@ -365,7 +384,7 @@ public class SatietyIndexService {
     public Map<String, Integer> getAllSatietyIndices() {
         return new HashMap<>(satietyIndex);
     }
-    // extract ingredients from product.getIngredientsText()¨
+    // extract ingredients from product.getIngredientsText()
     private List<String> extractIngredients(String ingredientsText) {
         List<String> ingredients = new ArrayList<>();
         if (ingredientsText != null) {
