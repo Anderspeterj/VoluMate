@@ -9,20 +9,19 @@ const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: themeStyles.background }]}>
       <View style={styles.contentContainer}>
-        <View style={styles.headerSection}>
-          <Text style={[styles.title, { color: themeStyles.text }]}>Mæthedsscanner</Text>
-          <Text style={[styles.description, { color: themeStyles.secondaryText }]}>
-            Scan dine madvarers stregkode og få deres mæthedsscore.{'\n'}
-            Jo højere score, jo mere mættende er maden.
+        <View>
+          <Text style={[styles.title, { color: themeStyles.text }]}>Velkommen til VoluMate</Text>
+          <Text style={[styles.subtitle, { color: themeStyles.secondaryText }]}>
+              Scan dine madvarers stregkode og få deres mæthedsindeks.
           </Text>
         </View>
-        <View style={styles.buttonSection}>
-          <TouchableOpacity 
-            style={[styles.scanButton, { backgroundColor: themeStyles.primary }]} 
-            onPress={() => navigation.navigate('Scanner')}
-          >
-            <Ionicons name="barcode-outline" size={32} color={themeStyles.text} />
-            <Text style={[styles.scanButtonText, { color: themeStyles.text }]}>Scan via stregkode</Text>
+        <View>
+          <TouchableOpacity style={[styles.button, { backgroundColor: themeStyles.primary }]} onPress={() => navigation.navigate('Scanner')}>
+              <Ionicons name="barcode-outline" size={32} color={themeStyles.text} />
+              <Text style={[styles.buttonText, { color: themeStyles.text }]}>Scan en stregkode</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.infoButton, { backgroundColor: themeStyles.card }]} onPress={() => navigation.navigate('SatietyIndex')}>
+              <Text style={[styles.infoButtonText, { color: themeStyles.text }]}>Hvad er mæthedsindekset?</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -38,47 +37,56 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
     padding: 20,
-  },
-  headerSection: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingTop: '25%',
-  },
-  buttonSection: {
-    paddingBottom: '5%',
-    alignItems: 'center',
+    paddingTop: 80,
+    paddingBottom: 50,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 30,
+    marginBottom: 10,
     textAlign: 'center',
   },
-  description: {
+  subtitle: {
     fontSize: 18,
     textAlign: 'center',
     marginBottom: 30,
     lineHeight: 24,
     paddingHorizontal: 10,
   },
-  scanButton: {
+  button: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    marginBottom: 20,
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 15,
+  },
+  infoButton: {
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
   },
-  scanButtonText: {
-    fontSize: 18,
+  infoButtonText: {
+    fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: 15,
   },
 });
 

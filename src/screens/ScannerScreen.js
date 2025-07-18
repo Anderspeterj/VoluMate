@@ -60,6 +60,13 @@ export default function ScannerScreen({ navigation }) {
         }}
         style={StyleSheet.absoluteFillObject}
       />
+      <TouchableOpacity 
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="arrow-back" size={32} color={themeStyles.text} />
+        <Text style={[styles.backButtonText, { color: themeStyles.text }]}>Tilbage</Text>
+      </TouchableOpacity>
       {scanned && (
         <View style={styles.buttonContainer}>
           <TouchableOpacity 
@@ -79,6 +86,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+  },
+  backButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 10,
   },
   buttonContainer: {
     position: 'absolute',

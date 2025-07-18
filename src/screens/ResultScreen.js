@@ -150,7 +150,7 @@ const ResultScreen = ({ route, navigation }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity 
           style={[styles.scanAgainButton, { backgroundColor: themeStyles.primary }]}
-          onPress={() => navigation.goBack()}
+          onPress={() => navigation.push('Scanner')}
         >
           <Ionicons name="barcode-outline" size={32} color={themeStyles.text} />
           <Text style={[styles.scanAgainButtonText, { color: themeStyles.text }]}>Scan et andet produkt</Text>

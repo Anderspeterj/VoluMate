@@ -83,6 +83,12 @@ const SavedScreen = ({ navigation }) => {
             <Text style={{color: themeStyles.secondaryText}}>You haven't saved any products yet.</Text>
         </View>
       )}
+      <TouchableOpacity
+        style={[styles.fab, { backgroundColor: themeStyles.primary }]}
+        onPress={() => navigation.navigate('Scanner')}
+      >
+        <Ionicons name="add" size={30} color={themeStyles.text} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -150,6 +156,21 @@ const styles = StyleSheet.create({
     },
     separator: {
         height: 12,
+    },
+    fab: {
+      position: 'absolute',
+      width: 56,
+      height: 56,
+      alignItems: 'center',
+      justifyContent: 'center',
+      right: 20,
+      bottom: 20,
+      borderRadius: 28,
+      elevation: 8,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
     },
 });
 

@@ -40,7 +40,7 @@ public class VolumeSerenityScoreService {
         } else if (score >= 200) {
             rating = "Meget mættende!";
             ratingColor = "#8BC34A";
-        } else if (score >= 150) {
+        } else if (score >= 140) {
             rating = "Godt mættende!";
             ratingColor = "#8BC34A";
         } else if (score >= 100) {

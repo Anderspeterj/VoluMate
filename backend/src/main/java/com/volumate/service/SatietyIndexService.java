@@ -23,20 +23,35 @@ public class SatietyIndexService {
         satietyIndex.put("doughnuts", 68);
         satietyIndex.put("cookies", 120);
         satietyIndex.put("crackers", 127);
+        satietyIndex.put("kiks", 127);
+        satietyIndex.put("rundstykker", 105);
+        satietyIndex.put("wienerbrød", 50);
         
         // Processed Meats (lower satiety due to processing and high salt/fat)
         satietyIndex.put("salami", 105);
         satietyIndex.put("sausage", 110);
         satietyIndex.put("pølse", 110);
+        satietyIndex.put("kødpølse", 110);
+        satietyIndex.put("medisterpølse", 130);
         satietyIndex.put("leverpostej", 140);
         satietyIndex.put("rullepølse", 120);
         satietyIndex.put("spegepølse", 110);
+        satietyIndex.put("bacon", 95);
+        satietyIndex.put("frikadeller", 176);
+        satietyIndex.put("fiskefrikadeller", 200);
+        satietyIndex.put("flæskesteg", 170);
+        satietyIndex.put("roastbeef", 176);
+        satietyIndex.put("hakkebøf", 176);
         
         // Snacks and Confectionary
         satietyIndex.put("mars candy bar", 70);
         satietyIndex.put("peanuts", 84);
         satietyIndex.put("yogurt", 88);
+        satietyIndex.put("hytteost", 180);
+        satietyIndex.put("skyr", 160);
+        satietyIndex.put("mælk", 90);
         satietyIndex.put("crisps", 91);
+        satietyIndex.put("flæskesvær", 95);
         satietyIndex.put("ice cream", 96);
         satietyIndex.put("jellybeans", 118);
         satietyIndex.put("pizza", 133);
@@ -55,8 +70,11 @@ public class SatietyIndexService {
         satietyIndex.put("rolled flakes", 209);
         satietyIndex.put("kogt skinke", 160);
         satietyIndex.put("hamburg", 160);
+        satietyIndex.put("hamburgerryg", 160);
         satietyIndex.put("ham", 160);
         satietyIndex.put("skinke", 160);
+
+        
 
         // Danish specific foods
         satietyIndex.put("leverpostej", 140);
@@ -74,6 +92,7 @@ public class SatietyIndexService {
         
         // Carbohydrate-Rich Foods
         satietyIndex.put("white bread", 100);
+        satietyIndex.put("franskbrød", 100);
         satietyIndex.put("french fries", 116);
         satietyIndex.put("white pasta", 119);
         satietyIndex.put("brown rice", 132);
@@ -100,9 +119,13 @@ public class SatietyIndexService {
         satietyIndex.put("baked beans", 168);
         satietyIndex.put("beef", 176);
         satietyIndex.put("makrel", 185);
+        satietyIndex.put("sild", 180);
+        satietyIndex.put("rejer", 200);
         satietyIndex.put("ling fish", 225);
+        satietyIndex.put("rødspætte", 225);
         satietyIndex.put("fish", 225);
         satietyIndex.put("tuna", 225);
+        satietyIndex.put("tunsalat", 175);
         satietyIndex.put("tun", 190);
         satietyIndex.put("salmon", 170);
         satietyIndex.put("laks", 170);
@@ -111,20 +134,41 @@ public class SatietyIndexService {
         // Fruits
         satietyIndex.put("bananas", 118);
         satietyIndex.put("grapes", 162);
+        satietyIndex.put("pære", 190);
+        satietyIndex.put("jordbær", 150);
         satietyIndex.put("oranges", 202);
         satietyIndex.put("apples", 197);
+        satietyIndex.put("gulerod", 190);
+        satietyIndex.put("carrot", 190);
+        satietyIndex.put("tomat", 185);
+        satietyIndex.put("tomato", 185);
+        satietyIndex.put("agurk", 170);
+        satietyIndex.put("cucumber", 170);
+        satietyIndex.put("broccoli", 235);
+        satietyIndex.put("blomkål", 220);
+        satietyIndex.put("løg", 140);
+        satietyIndex.put("onion", 140);
+        satietyIndex.put("salat", 150);
+        satietyIndex.put("lettuce", 150);
         
         // Additional variations and common names
         satietyIndex.put("potato", 323);
-        satietyIndex.put("bread", 100);
+        satietyIndex.put("knækbrød", 120);
+        satietyIndex.put("bread", 120);
         satietyIndex.put("pasta", 119);
         satietyIndex.put("rice", 138);
         satietyIndex.put("cereal", 100);
         satietyIndex.put("chips", 91);
         satietyIndex.put("chocolate", 70);
         satietyIndex.put("kylling", 170);
+        satietyIndex.put("kyllingefilet", 170);
         satietyIndex.put("chicken", 170);
         satietyIndex.put("candy", 70);
+        satietyIndex.put("slik", 70);
+        satietyIndex.put("vingummi", 70);
+        satietyIndex.put("lakrids", 70);
+        satietyIndex.put("bolcher", 70);
+        satietyIndex.put("tyggegummi", 70);
         satietyIndex.put("nuts", 84);
         satietyIndex.put("yoghurt", 88);
         satietyIndex.put("ice cream", 96);
@@ -139,13 +183,19 @@ public class SatietyIndexService {
             return null;
         }
 
-        // Check for grain/fuldkorn products in keywords FIRST (highest priority)
         List<String> keywords = product.getKeywordsLower();
         if (keywords != null) {
-            boolean isGrainProduct = keywords.stream().anyMatch(k -> 
-                k.equals("grain") || k.equals("grain bread") ||
-                k.equals("fuldkorn") || k.equals("fuldkornbrød") ||
-                k.equals("fullkorn") || k.equals("fullkornbrød"));
+            // Special case for sesame crispbread
+            boolean hasKnaekbrod = keywords.contains("knækbrød") || keywords.contains("knaekbrød");
+            if (hasKnaekbrod && keywords.contains("sesam")) {
+                return applyEvidenceBasedAdjustments(product, 148, false);
+            }
+
+            boolean isGrainProduct = keywords.stream().anyMatch(k ->
+                    k.equals("grain") || k.equals("grain bread") ||
+                            k.equals("fuldkorn") || k.equals("fuldkornbrød") ||
+                            k.equals("fullkorn") || k.equals("fullkornbrød")
+            );
             if (isGrainProduct) {
                 return applyEvidenceBasedAdjustments(product, 154, false);
             }
@@ -341,13 +391,20 @@ public class SatietyIndexService {
             return index;
         }
         
-        // Try partial matches - check if any word in the satiety index is contained in the food name
-        // or if the food name is contained in any word in the satiety index
-        for (Map.Entry<String, Integer> entry : satietyIndex.entrySet()) {
-            String key = entry.getKey();
-            if (normalizedName.contains(key) || key.contains(normalizedName)) {
-                return entry.getValue();
+        // Try to find the best partial match (longest key that matches as a whole word)
+        String bestMatchKey = null;
+        for (String key : satietyIndex.keySet()) {
+            // Use word boundary regex to ensure we match whole words
+            String pattern = "\\b" + java.util.regex.Pattern.quote(key) + "\\b";
+            if (java.util.regex.Pattern.compile(pattern).matcher(normalizedName).find()) {
+                if (bestMatchKey == null || key.length() > bestMatchKey.length()) {
+                    bestMatchKey = key;
+                }
             }
+        }
+
+        if (bestMatchKey != null) {
+            return satietyIndex.get(bestMatchKey);
         }
         
         return null; // Not found in satiety index

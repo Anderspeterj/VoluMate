@@ -9,6 +9,7 @@ import ScannerScreen from '../screens/ScannerScreen';
 import ResultScreen from '../screens/ResultScreen';
 import SavedScreen from '../screens/SavedScreen';
 import ContactScreen from '../screens/ContactScreen';
+import SatietyIndexScreen from '../screens/SatietyIndexScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -27,6 +28,14 @@ const HomeStack = () => {
       <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="Scanner" component={ScannerScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="Result" component={ResultScreen} options={{ headerShown: false }}/>
+      <Stack.Screen 
+        name="SatietyIndex" 
+        component={SatietyIndexScreen} 
+        options={{ 
+          title: 'Mæthedsindekset',
+          headerBackTitle: 'Tilbage' 
+        }}
+      />
     </Stack.Navigator>
   )
 }
@@ -37,6 +46,7 @@ const SavedStack = () => {
     <Stack.Navigator screenOptions={commonStackOptions(themeStyles)}>
       <Stack.Screen name="SavedList" component={SavedScreen} options={{ headerShown: false }}/>
       <Stack.Screen name="Result" component={ResultScreen} options={{ headerShown: false }}/>
+      <Stack.Screen name="Scanner" component={ScannerScreen} options={{ headerShown: false }}/>
     </Stack.Navigator>
   )
 }

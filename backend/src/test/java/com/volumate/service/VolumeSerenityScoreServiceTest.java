@@ -6,15 +6,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
 class VolumeSerenityScoreServiceTest {
     
+    @Mock
+    private SatietyIndexService satietyIndexService;
+
+    @InjectMocks
     private VolumeSerenityScoreService scoreService;
-    
-    @BeforeEach
-    void setUp() {
-        scoreService = new VolumeSerenityScoreService();
-    }
     
     @Test
     @DisplayName("Should calculate high score for healthy product")
@@ -24,14 +30,16 @@ class VolumeSerenityScoreServiceTest {
         product.setProductName("Organic Oat Bread");
         product.setCategories("bread, whole grain, organic");
         
+        when(satietyIndexService.calculateSatietyIndex(product)).thenReturn(209);
+
         // When
         VolumeSerenityScore score = scoreService.calculateScore(product);
         
         // Then
         assertTrue(score.hasScore());
-        assertTrue(score.getScore() >= 8);
-        assertEquals("Excellent Choice!", score.getRating());
-        assertEquals("#4CAF50", score.getRatingColor());
+        assertEquals(209, score.getScore());
+        assertEquals("Meget mættende!", score.getRating());
+        assertEquals("#8BC34A", score.getRatingColor());
     }
     
     @Test
@@ -42,14 +50,16 @@ class VolumeSerenityScoreServiceTest {
         product.setProductName("Chocolate Candy Bar");
         product.setCategories("candy, chocolate, sweet");
         
+        when(satietyIndexService.calculateSatietyIndex(product)).thenReturn(70);
+
         // When
         VolumeSerenityScore score = scoreService.calculateScore(product);
         
         // Then
         assertTrue(score.hasScore());
-        assertTrue(score.getScore() <= 3);
-        assertEquals("Consider a Healthier Option", score.getRating());
-        assertEquals("#F44336", score.getRatingColor());
+        assertEquals(70, score.getScore());
+        assertEquals("Overvej et andet alternativ hvis du vil undgå at blive sulten hurtigt igen", score.getRating());
+        assertEquals("#FF9800", score.getRatingColor());
     }
     
     @Test
@@ -60,13 +70,15 @@ class VolumeSerenityScoreServiceTest {
         product.setProductName("Mixed Fruit Yogurt");
         product.setCategories("yogurt, fruit, dairy");
         
+        when(satietyIndexService.calculateSatietyIndex(product)).thenReturn(150);
+        
         // When
         VolumeSerenityScore score = scoreService.calculateScore(product);
         
         // Then
         assertTrue(score.hasScore());
-        assertTrue(score.getScore() >= 6 && score.getScore() < 8);
-        assertEquals("Good Choice", score.getRating());
+        assertEquals(150, score.getScore());
+        assertEquals("Godt mættende!", score.getRating());
         assertEquals("#8BC34A", score.getRatingColor());
     }
     
@@ -77,13 +89,15 @@ class VolumeSerenityScoreServiceTest {
         Product product = new Product();
         product.setCategories("bread");
         // productName is null
+
+        when(satietyIndexService.calculateSatietyIndex(product)).thenReturn(null);
         
         // When
         VolumeSerenityScore score = scoreService.calculateScore(product);
         
         // Then
         assertFalse(score.hasScore());
-        assertEquals("Could not determine score from available data.", score.getRating());
+        assertEquals("Desværre ingen mæthedsscore kunne findes. Det kan være fordi det er en drikkevare.", score.getRating());
         assertEquals("#B0B0B0", score.getRatingColor());
     }
     
@@ -95,12 +109,14 @@ class VolumeSerenityScoreServiceTest {
         product.setProductName("Unknown Product");
         product.setCategories("unknown category");
         
+        when(satietyIndexService.calculateSatietyIndex(product)).thenReturn(null);
+
         // When
         VolumeSerenityScore score = scoreService.calculateScore(product);
         
         // Then
         assertFalse(score.hasScore());
-        assertEquals("Could not determine score from available data.", score.getRating());
+        assertEquals("Desværre ingen mæthedsscore kunne findes. Det kan være fordi det er en drikkevare.", score.getRating());
         assertEquals("#B0B0B0", score.getRatingColor());
     }
     
@@ -112,13 +128,15 @@ class VolumeSerenityScoreServiceTest {
         product.setProductName("Fresh Apple");
         product.setCategories(""); // Empty categories
         
+        when(satietyIndexService.calculateSatietyIndex(product)).thenReturn(197);
+
         // When
         VolumeSerenityScore score = scoreService.calculateScore(product);
         
         // Then
         assertTrue(score.hasScore());
-        assertTrue(score.getScore() >= 6);
-        assertEquals("Good Choice", score.getRating());
+        assertEquals(197, score.getScore());
+        assertEquals("Godt mættende!", score.getRating());
     }
     
     @Test
@@ -129,12 +147,14 @@ class VolumeSerenityScoreServiceTest {
         product.setProductName("Fresh Apple");
         product.setCategories(null); // Null categories
         
+        when(satietyIndexService.calculateSatietyIndex(product)).thenReturn(197);
+        
         // When
         VolumeSerenityScore score = scoreService.calculateScore(product);
         
         // Then
         assertTrue(score.hasScore());
-        assertTrue(score.getScore() >= 6);
-        assertEquals("Good Choice", score.getRating());
+        assertEquals(197, score.getScore());
+        assertEquals("Godt mættende!", score.getRating());
     }
 } 
