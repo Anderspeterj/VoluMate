@@ -73,6 +73,9 @@ public class SatietyIndexService {
         satietyIndex.put("hamburgerryg", 160);
         satietyIndex.put("ham", 160);
         satietyIndex.put("skinke", 160);
+        satietyIndex.put("corn", 145);
+        satietyIndex.put("majs", 145);
+
 
         
 
@@ -148,8 +151,48 @@ public class SatietyIndexService {
         satietyIndex.put("blomkål", 220);
         satietyIndex.put("løg", 140);
         satietyIndex.put("onion", 140);
+        satietyIndex.put("røget kød", 170);
+        satietyIndex.put("hummus", 125);
+        satietyIndex.put("hummu", 125); 
         satietyIndex.put("salat", 150);
+        satietyIndex.put("olive oil", 40);
+        satietyIndex.put("olivenolie", 40);
+        satietyIndex.put("olivenolie", 40);
+        satietyIndex.put("solsikkeolie", 40);
         satietyIndex.put("lettuce", 150);
+        satietyIndex.put("cake", 65);
+        satietyIndex.put("kage", 65);
+        satietyIndex.put("riskiks", 65);
+        satietyIndex.put("kiks", 65);
+        satietyIndex.put("salsa", 65);
+        satietyIndex.put("salsasauce", 65);
+        satietyIndex.put("müslibar", 65);
+        satietyIndex.put("müsli", 65);
+        satietyIndex.put("müsli bar", 110);
+        satietyIndex.put("müsli bar", 110);
+        satietyIndex.put("müsli bar", 110);
+        satietyIndex.put("kakao", 75);
+        satietyIndex.put("cola", 50);
+        satietyIndex.put("ananas", 135);
+        satietyIndex.put("nudler", 119);
+        satietyIndex.put("minimælk", 85);
+        satietyIndex.put("ostehaps", 135);
+        satietyIndex.put("mælkesnit", 65);
+        satietyIndex.put("grillpølser", 120);
+        satietyIndex.put("nakkekoteletter", 175);
+        satietyIndex.put("ribeye", 180);
+        satietyIndex.put("squash", 170);
+        satietyIndex.put("fersken", 150);
+        satietyIndex.put("toast", 100);
+        satietyIndex.put("pulled pork", 165);
+        satietyIndex.put("pulled chicken", 175);
+        satietyIndex.put("møllehjul", 100);
+        satietyIndex.put("giflar", 68);
+        satietyIndex.put("kartoffelsalat", 120);
+
+
+
+
         
         // Additional variations and common names
         satietyIndex.put("potato", 323);
@@ -170,6 +213,13 @@ public class SatietyIndexService {
         satietyIndex.put("bolcher", 70);
         satietyIndex.put("tyggegummi", 70);
         satietyIndex.put("nuts", 84);
+        satietyIndex.put("nødder", 84);
+        satietyIndex.put("nødder", 84);
+        satietyIndex.put("mandler", 84);
+        satietyIndex.put("valnødder", 84);
+        satietyIndex.put("cashewnødder", 84);
+        satietyIndex.put("hasselnødder", 84);
+        satietyIndex.put("pistacienødder", 84);
         satietyIndex.put("yoghurt", 88);
         satietyIndex.put("ice cream", 96);
         satietyIndex.put("popcorn", 154);
@@ -259,19 +309,30 @@ public class SatietyIndexService {
             String[] categoryList = categories.toLowerCase().split(",");
             for (String category : categoryList) {
                 category = category.trim();
-                // Skip misleading categories
-                if (category.contains("snack") || 
-                    category.contains("doodle") || 
-                    category.contains("appetizer") || 
-                    category.contains("puffed") ||
-                    category.contains("cheese") ||
-                    // Skip general flakes unless it's specifically oats/havregryn
-                    (category.contains("flakes") && 
-                     !(category.contains("oat") || 
-                       category.contains("havre") || 
-                       category.contains("rolled oats")))) {
+                
+                // skip potato-based snacks
+                boolean isPotatoSnack = category.contains("potato") &&
+                                        (category.contains("snack") || category.contains("salty-snacks") ||
+                                         category.contains("puffed") || category.contains("doodle"));
+
+                // Skip cheese-based snacks to avoid using the high satiety score of plain cheese
+                boolean isCheeseSnack = category.contains("cheese") &&
+                                        (category.contains("snack") || category.contains("salty-snacks") ||
+                                         category.contains("puffed") || category.contains("doodle"));
+
+                // Skip generic flakes unless it's specifically oats/havregryn
+                boolean isGenericFlakes = category.contains("flakes") &&
+                                          !(category.contains("oat") ||
+                                            category.contains("havre") ||
+                                            category.contains("rolled oats"));
+                
+                // Also skip general snack categories that aren't covered above
+                boolean isGeneralSnack = category.contains("snack") || category.contains("appetizer");
+
+                if (isCheeseSnack || isGenericFlakes || isGeneralSnack) {
                     continue;
                 }
+                
                 Integer categoryScore = getSatietyIndex(category.trim());
                 if (categoryScore != null) {
                     return applyEvidenceBasedAdjustments(product, categoryScore, isProcessedMeat);

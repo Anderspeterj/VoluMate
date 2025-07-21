@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
 import { ThemeContext } from '../contexts/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
 
-const SatietyIndexScreen = () => {
+const SatietyIndexScreen = ({ navigation }) => {
   const { styles: themeStyles } = useContext(ThemeContext);
 
   return (
@@ -11,6 +12,13 @@ const SatietyIndexScreen = () => {
         style={[styles.container, { backgroundColor: themeStyles.background }]}
         contentContainerStyle={styles.scrollContent}
       >
+        {/* Tilbage-knap */}
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="arrow-back" size={24} color={themeStyles.text} />
+        </TouchableOpacity>
         <View style={styles.content}>
           <Text style={[
             styles.title,
@@ -51,7 +59,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 50,
+    marginTop: 30,
     textAlign: 'center',
   },
   divider: {
@@ -63,6 +72,13 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 16,
     lineHeight: 24,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 16,
+    zIndex: 10,
+    padding: 8,
   },
 });
 

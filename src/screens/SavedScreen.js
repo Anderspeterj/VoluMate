@@ -49,7 +49,7 @@ const SavedScreen = ({ navigation }) => {
         <Text style={[styles.productScore, { color: item.rating_color || '#B0B0B0' }]}>{item.score !== null ? `${item.score}/100` : 'No score'}</Text>
       </View>
       <TouchableOpacity onPress={() => handleDelete(item.barcode)} style={styles.deleteButton}>
-        <Ionicons name="trash-outline" size={24} color={themeStyles.secondaryText} />
+        <Ionicons name="trash-outline" size={24} color={themeStyles.delete} />
       </TouchableOpacity>
     </View>
   );
@@ -67,7 +67,7 @@ const SavedScreen = ({ navigation }) => {
             color={themeStyles.text}
           />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: themeStyles.text }]}>
+        <Text style={[styles.title, { color: themeStyles.text,  }] }>
           Gemte Produkter
         </Text>
       </View>
@@ -83,12 +83,6 @@ const SavedScreen = ({ navigation }) => {
             <Text style={{color: themeStyles.secondaryText}}>You haven't saved any products yet.</Text>
         </View>
       )}
-      <TouchableOpacity
-        style={[styles.fab, { backgroundColor: themeStyles.primary }]}
-        onPress={() => navigation.navigate('Scanner')}
-      >
-        <Ionicons name="add" size={30} color={themeStyles.text} />
-      </TouchableOpacity>
     </View>
   );
 };
@@ -116,6 +110,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         flex: 1,
+        
     },
     list: {
         paddingHorizontal: 16,
@@ -128,6 +123,8 @@ const styles = StyleSheet.create({
         padding: 16,
         marginVertical: 6,
         marginBottom: 10,
+        borderWidth: 0.2,
+        borderColor: '#e9edf0',
     },
     productImage: {
         width: 30,
@@ -148,6 +145,7 @@ const styles = StyleSheet.create({
     },
     deleteButton: {
         padding: 5,
+        color: '#bc0116',
     },
     emptyContainer: {
         flex: 1,

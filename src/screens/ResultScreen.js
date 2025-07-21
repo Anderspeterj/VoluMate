@@ -108,7 +108,7 @@ const ResultScreen = ({ route, navigation }) => {
     if (product) {
       return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={[styles.card, { backgroundColor: themeStyles.card }]}>
+          <View style={[styles.card, { backgroundColor: themeStyles.card, marginTop: 110 }]}>
             <Text style={[styles.title, { color: themeStyles.text }]}>{product.displayName || 'No product name'}</Text>
             {product.image_url ? (
               <Image source={{ uri: product.image_url }} style={styles.productImage} />
@@ -145,11 +145,26 @@ const ResultScreen = ({ route, navigation }) => {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: themeStyles.background }]}>
+    <View style={[styles.container, { backgroundColor: themeStyles.background }]}> 
+      {/* Custom back button - outside ScrollView */}
+      <TouchableOpacity
+        style={{
+          position: 'absolute',
+          top: 60,
+          left: 16,
+          zIndex: 9999,
+          padding: 8,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          borderRadius: 20,
+        }}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="arrow-back" size={28} color="#fff" />
+      </TouchableOpacity>
       {renderContent()}
       <View style={styles.buttonContainer}>
         <TouchableOpacity 
-          style={[styles.scanAgainButton, { backgroundColor: themeStyles.primary }]}
+          style={[styles.scanAgainButton, { backgroundColor: themeStyles.add }]}
           onPress={() => navigation.push('Scanner')}
         >
           <Ionicons name="barcode-outline" size={32} color={themeStyles.text} />

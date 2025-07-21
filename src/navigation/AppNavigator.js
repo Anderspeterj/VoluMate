@@ -70,11 +70,12 @@ const AppNavigator = () => {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: themeStyles.primary,
+        tabBarActiveTintColor: themeStyles.ifHighlight,
         tabBarInactiveTintColor: themeStyles.secondaryText,
         tabBarStyle: {
           backgroundColor: themeStyles.card,
-          borderTopWidth: 0,
+          borderTopWidth: 0.17,
+          borderTopColor: '#13171a',
         },
         tabBarLabelStyle: {
           fontWeight: 'bold',
