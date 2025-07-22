@@ -4,6 +4,8 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import LottieView from 'lottie-react-native';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 // Add dimension constants
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
@@ -20,6 +22,13 @@ export default function ScannerScreen({ navigation }) {
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualBarcode, setManualBarcode] = useState('');
   const { styles: themeStyles, theme } = useContext(ThemeContext);
+
+  // Reset scanned state when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      setScanned(false);
+    }, [])
+  );
 
   const handleBarCodeScanned = (barcode) => {
     const { data, bounds } = barcode;
@@ -116,7 +125,8 @@ export default function ScannerScreen({ navigation }) {
         <LottieView
           source={require('../../assets/nemtnavn.json')}
           autoPlay
-          loop
+          loop = {false}
+          speed = {1.5}
           style={{ width: 180, height: 180, alignSelf: 'center', marginVertical: 120 }}
         />
 
@@ -140,7 +150,7 @@ export default function ScannerScreen({ navigation }) {
 
         {/* Arrow & instruction */}
         <Ionicons name="caret-down" size={32} color={themeStyles.text} style={[styles.arrow, { top: FRAME_TOP + FRAME_HEIGHT + 5 }]} />
-        <View style={[styles.instructionBox, { top: FRAME_TOP + FRAME_HEIGHT + 50, backgroundColor: '#1E2A32' }] }>
+        <View style={[styles.instructionBox, { top: FRAME_TOP + FRAME_HEIGHT + 50, backgroundColor: themeStyles.background }] }>
           <Text style={[styles.instructionTitle, { color: themeStyles.text }]}>Scan varer</Text>
           <Text style={[styles.instructionText, { color: themeStyles.secondaryText }]}>Placér stregkoden inden for rammen</Text>
         </View>
@@ -362,7 +372,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: SCREEN_WIDTH,
     height: FRAME_TOP,
-    backgroundColor: '#101D25',
+    backgroundColor: '#0d1114',
   },
   maskBottom: {
     position: 'absolute',
@@ -370,7 +380,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT - FRAME_TOP - FRAME_HEIGHT,
-    backgroundColor: '#101D25',
+    backgroundColor: '#0d1114',
   },
   maskLeft: {
     position: 'absolute',
@@ -378,7 +388,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: FRAME_LEFT,
     height: FRAME_HEIGHT,
-    backgroundColor: '#101D25',
+    backgroundColor: '#0d1114',
   },
   maskRight: {
     position: 'absolute',
@@ -386,7 +396,7 @@ const styles = StyleSheet.create({
     right: 0,
     width: FRAME_LEFT,
     height: FRAME_HEIGHT,
-    backgroundColor: '#101D25',
+    backgroundColor: '#0d1114',
   },
   // Modal styles
   modalOverlay: {

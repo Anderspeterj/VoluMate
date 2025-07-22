@@ -7,6 +7,48 @@ import { Ionicons } from '@expo/vector-icons';
 
 // Score calculation is now handled by the Java backend
 
+// Helper functions for nutrition information
+const getNutriScoreDescription = (grade) => {
+  switch (grade?.toLowerCase()) {
+    case 'a': return 'Excellent nutritional quality';
+    case 'b': return 'Good nutritional quality';
+    case 'c': return 'Average nutritional quality';
+    case 'd': return 'Poor nutritional quality';
+    case 'e': return 'Very poor nutritional quality';
+    default: return 'Average nutritional quality';
+  }
+};
+
+const getNovaGroupDescription = (group) => {
+  switch (group) {
+    case '1': return 'Unprocessed foods';
+    case '2': return 'Processed culinary ingredients';
+    case '3': return 'Processed foods';
+    case '4': return 'Ultra-processed foods';
+    default: return 'Processed foods';
+  }
+};
+
+const getNutriScoreColor = (grade) => {
+  switch (grade?.toLowerCase()) {
+    case 'a': return '#038141'; // Green
+    case 'b': return '#85BB2F'; // Yellow
+    case 'c': return '#FECB02'; // Orange 
+    case 'd': return '#EF8200'; // Red
+    case 'e': return '#E63E11'; // Dark Red
+    default: return '#B0B0B0'; // Gray
+  }
+};
+
+const getNovaGroupColor = (group) => {
+  switch (group) {
+    case '1': return '#038141'; // Green
+    case '2': return '#85BB2F'; // Yellow
+    case '3': return '#FECB02'; // Orange
+    case '4': return '#c92f32'; // Red
+    default: return '#B0B0B0'; // Gray
+  }
+};
 
 const ResultScreen = ({ route, navigation }) => {
   const { barcode } = route.params;
@@ -108,7 +150,7 @@ const ResultScreen = ({ route, navigation }) => {
     if (product) {
       return (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={[styles.card, { backgroundColor: themeStyles.card, marginTop: 110 }]}>
+          <View style={[styles.card, { backgroundColor: themeStyles.card, marginTop: 110, borderRadius: 15, borderWidth: 0.15, borderColor: '#FFFFFF' }]}>
             <Text style={[styles.title, { color: themeStyles.text }]}>{product.displayName || 'No product name'}</Text>
             {product.image_url ? (
               <Image source={{ uri: product.image_url }} style={styles.productImage} />
@@ -126,17 +168,64 @@ const ResultScreen = ({ route, navigation }) => {
                <Text style={styles.saveButtonText}>{isSaved ? 'Saved' : 'Gem til senere'}</Text>
              </TouchableOpacity>
           </View>
-          <View style={[styles.card, { backgroundColor: themeStyles.card }]}>
+          <View style={[styles.card, { backgroundColor: themeStyles.card, borderRadius: 15, borderWidth: 0.15, borderColor: '#FFFFFF' }]}>
             <Text style={styles.scoreTitle}>Mæthedsscore</Text>
             {score !== null ? (
               <View style={styles.scoreContainer}>
                 <Text style={[styles.score, { color: ratingColor }]}>{score}</Text>
-                <Text style={[styles.scoreTotal, { color: themeStyles.secondaryText }]}>/ 300</Text>
+                <Text style={[styles.scoreTotal, { color: themeStyles.secondaryText }]}>/100</Text>
               </View>
             ) : (
               <Text style={[styles.score, { color: '#B0B0B0' }]}>?</Text>
             )}
             <Text style={[styles.rating, { color: themeStyles.text }]}>{rating || 'No rating available'}</Text>
+          </View>
+
+          {/* Nutri-Score and NOVA Group Cards */}
+          <View style={styles.nutritionContainer}>
+            {/* Nutri-Score Card */}
+            <View style={[styles.nutritionCard, { backgroundColor: themeStyles.card, borderWidth: 0.2, borderColor: '#FFFFFF' }]}>
+              <View style={styles.nutritionIconContainer}>
+                <View style={styles.nutriScoreIcon}>
+                  <Text style={styles.nutriScoreText}>NUTRI-SCORE</Text>
+                  <View style={styles.nutriScoreBar}>
+                    <View style={[styles.nutriScoreSegment, { backgroundColor: '#038141' }]} />
+                    <View style={[styles.nutriScoreSegment, { backgroundColor: '#85BB2F' }]} />
+                    <View style={[styles.nutriScoreSegment, { backgroundColor: '#FECB02' }]} />
+                    <View style={[styles.nutriScoreSegment, { backgroundColor: '#EF8200' }]} />
+                    <View style={[styles.nutriScoreSegment, { backgroundColor: '#E63E11' }]} />
+                  </View>
+                  <View style={styles.newCalculationBadge}>
+                    <Text style={styles.newCalculationText}>NEW CALCULATION</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.nutritionTextContainer}>
+                <Text style={[styles.nutritionTitle, { color: getNutriScoreColor(product.nutriscore_grade) }]}>
+                  Nutri-Score {product.nutriscore_grade?.toUpperCase() || 'C'}
+                </Text>
+                <Text style={[styles.nutritionDescription, { color: themeStyles.secondaryText }]}>
+                  {getNutriScoreDescription(product.nutriscore_grade)}
+                </Text>
+              </View>
+            </View>
+
+            {/* NOVA Group Card */}
+            <View style={[styles.nutritionCard, { backgroundColor: themeStyles.card, borderWidth: 0.2, borderColor: '#FFFFFF' }]}>
+              <View style={styles.nutritionIconContainer}>
+                <View style={styles.novaIconContainer}>
+                  <Text style={styles.novaText}>NOVA</Text>
+                  <View style={styles.novaSquare}>
+                    <Text style={styles.novaNumber}>{product.nova_group || '3'}</Text>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.nutritionTextContainer}>
+                <Text style={[styles.nutritionTitle, { color: getNovaGroupColor(product.nova_group) }]}>
+                  {getNovaGroupDescription(product.nova_group)}
+                </Text>
+              </View>
+            </View>
           </View>
         </ScrollView>
       )
@@ -165,7 +254,7 @@ const ResultScreen = ({ route, navigation }) => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity 
           style={[styles.scanAgainButton, { backgroundColor: themeStyles.add }]}
-          onPress={() => navigation.push('Scanner')}
+          onPress={() => navigation.navigate('Scanner')}
         >
           <Ionicons name="barcode-outline" size={32} color={themeStyles.text} />
           <Text style={[styles.scanAgainButtonText, { color: themeStyles.text }]}>Scan et andet produkt</Text>
@@ -205,7 +294,6 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'contain',
     marginBottom: 20,
-    borderRadius: 10,
   },
   imagePlaceholder: {
     width: 200,
@@ -297,6 +385,116 @@ const styles = StyleSheet.create({
   retryButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  nutritionContainer: {
+    flexDirection: 'column',
+    marginTop: 15,
+    padding: 10,
+  },
+  nutritionCard: {
+    borderRadius: 0.15,
+    padding: 15,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 8,
+  },
+  nutritionIconContainer: {
+    width: 100,
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  nutriScoreIcon: {
+    width: 90,
+    height: 90,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  nutriScoreText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#000000',
+    textAlign: 'center',
+    marginBottom: 6,
+  },
+  nutriScoreBar: {
+    flexDirection: 'row',
+    width: '100%',
+    height: 10,
+    borderRadius: 5,
+    overflow: 'hidden',
+    marginBottom: 6,
+  },
+  nutriScoreSegment: {
+    flex: 1,
+    height: '100%',
+  },
+  newCalculationBadge: {
+    backgroundColor: '#1E3A8A',
+    borderRadius: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+  newCalculationText: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+  },
+  nutritionTextContainer: {
+    flex: 1,
+  },
+  nutritionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  nutritionDescription: {
+    fontSize: 14,
+  },
+  novaIconContainer: {
+    width: 90,
+    height: 90,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  novaText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#666666',
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  novaSquare: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#E63E11',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  novaNumber: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
   },
 });
 

@@ -155,14 +155,18 @@ public class SatietyIndexService {
         satietyIndex.put("hummus", 125);
         satietyIndex.put("hummu", 125); 
         satietyIndex.put("salat", 150);
-        satietyIndex.put("olive oil", 40);
-        satietyIndex.put("olivenolie", 40);
-        satietyIndex.put("olivenolie", 40);
-        satietyIndex.put("solsikkeolie", 40);
+        satietyIndex.put("olive oil", 55);
+        satietyIndex.put("olivenolie", 55);
+        satietyIndex.put("olivenolie", 55);
+        satietyIndex.put("solsikkeolie", 55);
         satietyIndex.put("lettuce", 150);
         satietyIndex.put("cake", 65);
         satietyIndex.put("kage", 65);
-        satietyIndex.put("riskiks", 65);
+        satietyIndex.put("riskiks", 75);
+        satietyIndex.put("riskager", 75);
+        satietyIndex.put("rice cake", 75);
+        satietyIndex.put("rice cakes", 75);
+        satietyIndex.put("rice crackers", 75);
         satietyIndex.put("kiks", 65);
         satietyIndex.put("salsa", 65);
         satietyIndex.put("salsasauce", 65);
@@ -241,6 +245,8 @@ public class SatietyIndexService {
                 return applyEvidenceBasedAdjustments(product, 148, false);
             }
 
+
+            
             boolean isGrainProduct = keywords.stream().anyMatch(k ->
                     k.equals("grain") || k.equals("grain bread") ||
                             k.equals("fuldkorn") || k.equals("fuldkornbrød") ||
@@ -306,9 +312,29 @@ public class SatietyIndexService {
 
         // First try to get satiety index from categories, but skip misleading categories
         if (categories != null && !categories.isEmpty()) {
+            // First check if this is a riskiks product based on keywords
+            boolean isRiskiksFromKeywords = false;
+            if (keywords != null) {
+                isRiskiksFromKeywords = keywords.contains("riskiks") || 
+                                       (keywords.contains("rice") && keywords.contains("riskager")) ||
+                                       (keywords.contains("rice") && keywords.contains("cake"));
+            }
+            if (isRiskiksFromKeywords) {
+                return applyEvidenceBasedAdjustments(product, 75, isProcessedMeat); // Return correct riskiks score
+            }
+            
             String[] categoryList = categories.toLowerCase().split(",");
             for (String category : categoryList) {
                 category = category.trim();
+                
+                // Skip riskiks products (rice cakes) - they have misleading high satiety scores
+                boolean isRiskiks = category.contains("riskiks") || 
+                                   (category.contains("rice") && category.contains("cake")) ||
+                                   (category.contains("rice") && category.contains("cracker")) ||
+                                   (category.contains("rice") && category.contains("riskager"));
+                if (isRiskiks) {
+                    continue;
+                }
                 
                 // skip potato-based snacks
                 boolean isPotatoSnack = category.contains("potato") &&

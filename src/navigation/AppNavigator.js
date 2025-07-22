@@ -32,8 +32,9 @@ const HomeStack = () => {
         name="SatietyIndex" 
         component={SatietyIndexScreen} 
         options={{ 
-          title: 'Mæthedsindekset',
-          headerBackTitle: 'Tilbage' 
+          title: '',
+          headerBackTitle: 'Tilbage',
+          headerShown: false,
         }}
       />
     </Stack.Navigator>
